@@ -18,7 +18,7 @@ fun AccountScreen(onBackClick: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Edit profile") },
+                title = { Text("Edit account") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -46,19 +46,19 @@ fun AccountScreen(onBackClick: () -> Unit) {
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
-                label = { Text("Street") },
+                placeholder = { Text("Street") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
-                label = { Text("Unit") },
+                placeholder = { Text("Unit") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
-                label = { Text("Postal code") },
+                placeholder = { Text("Postal Code") },
                 modifier = Modifier.fillMaxWidth()
             )
             Row(

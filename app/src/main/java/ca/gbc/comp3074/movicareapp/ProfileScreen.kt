@@ -40,11 +40,11 @@ fun ProfileScreen(
                 modifier = Modifier.size(120.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Michael Angelo", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text("Przemislaw Pauluk", fontSize = 24.sp, fontWeight = FontWeight.Bold)
             Text("74 years", fontSize = 18.sp, color = Color.Gray)
             Spacer(modifier = Modifier.height(12.dp))
             Text("My Address:", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Text("3620 Kaneff\nUnit#109\nL5A-3X1", fontSize = 16.sp)
+            Text("160 Kendal Avenue\nUnit#160\nL5A-3X1", fontSize = 16.sp)
             Spacer(modifier = Modifier.height(24.dp))
 
             Card(

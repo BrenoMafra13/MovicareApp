@@ -54,16 +54,16 @@ fun AddMedicationScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "ADIVL 500mg",
+                value = "",
                 onValueChange = {},
-                label = { Text("Medication") },
+                label = { Text("Medication name") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "1 PILL",
+                value = "",
                 onValueChange = {},
                 label = { Text("Dosage") },
                 modifier = Modifier.fillMaxWidth()
@@ -72,7 +72,7 @@ fun AddMedicationScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "Monday, Wednesday",
+                value = "",
                 onValueChange = {},
                 label = { Text("Day") },
                 modifier = Modifier.fillMaxWidth()
@@ -81,7 +81,7 @@ fun AddMedicationScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "10am and 3pm",
+                value = "",
                 onValueChange = {},
                 label = { Text("Time") },
                 modifier = Modifier.fillMaxWidth()

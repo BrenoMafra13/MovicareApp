@@ -41,16 +41,16 @@ fun AddAppointmentScreen(
             verticalArrangement = Arrangement.Top
         ) {
             OutlinedTextField(
-                value = "X-ray",
+                value = "",
                 onValueChange = {},
-                label = { Text("Appointment name") },
+                label = { Text("Appointment type") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "Thursday",
+                value = "",
                 onValueChange = {},
                 label = { Text("Day") },
                 modifier = Modifier.fillMaxWidth()
@@ -59,7 +59,7 @@ fun AddAppointmentScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "2pm",
+                value = "",
                 onValueChange = {},
                 label = { Text("Time") },
                 modifier = Modifier.fillMaxWidth()
