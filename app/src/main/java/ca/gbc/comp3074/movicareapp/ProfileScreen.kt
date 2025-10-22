@@ -1,6 +1,7 @@
 package ca.gbc.comp3074.movicareapp
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,11 +11,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ProfileScreen(
@@ -29,145 +30,104 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(horizontal = 24.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Profile Picture",
-                modifier = Modifier.size(120.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Przemislaw Pauluk", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text("74 years", fontSize = 18.sp, color = Color.Gray)
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("My Address:", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            Text("160 Kendal Avenue\nUnit#160\nL5A-3X1", fontSize = 16.sp)
-            Spacer(modifier = Modifier.height(24.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onMyHealthClick() },
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("My Health", fontSize = 18.sp)
-                    Icon(Icons.Default.ArrowForward, contentDescription = "Arrow")
+                        .size(130.dp)
+                        .clickable { }
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text("\nJane", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                    Text("74 years", fontSize = 25.sp, color = Color.Gray)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text("My Address:", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        "3620 Kaneff\nUnit#109\nL5A-3X1",
+                        fontSize = 20.sp,
+                        lineHeight = 20.sp
+                    )
                 }
             }
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onMedicationsClick() },
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
-            ) {
-                Row(
+            Spacer(modifier = Modifier.height(28.dp))
+
+            @Composable
+            fun MenuItem(title: String, onClick: () -> Unit) {
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(vertical = 5.dp)
+                        .clickable { onClick() },
+                    shape = RoundedCornerShape(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
                 ) {
-                    Text("Medications", fontSize = 18.sp)
-                    Icon(Icons.Default.ArrowForward, contentDescription = "Arrow")
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp, vertical = 14.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(title, fontSize = 18.sp)
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = "Arrow"
+                        )
+                    }
                 }
             }
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onFamilyClick() },
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Family Members", fontSize = 18.sp)
-                    Icon(Icons.Default.ArrowForward, contentDescription = "Arrow")
-                }
-            }
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onAppointmentsClick() },
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Appointments", fontSize = 18.sp)
-                    Icon(Icons.Default.ArrowForward, contentDescription = "Arrow")
-                }
-            }
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onAccountClick() },
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Account", fontSize = 18.sp)
-                    Icon(Icons.Default.ArrowForward, contentDescription = "Arrow")
-                }
-            }
+            MenuItem("My Health", onMyHealthClick)
+            MenuItem("Medications", onMedicationsClick)
+            MenuItem("Family Members", onFamilyClick)
+            MenuItem("Appointments", onAppointmentsClick)
+            MenuItem("Account", onAccountClick)
         }
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, bottom = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
                 onClick = onBackClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(4.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E88E5))
             ) {
-                Text("Back")
+                Text("Back", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
+
             Button(
                 onClick = onLogoutClick,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFD32F2F),
-                    contentColor = Color.White
-                )
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(4.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336))
             ) {
-                Text("Log out")
+                Text("Log out", color = Color(0xFFE3F2FD), fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
         }
+
+
     }
 }
