@@ -37,13 +37,18 @@ class MainActivity : ComponentActivity() {
                             onBackClick = { showLogin = false }
                         )
                     }
+
                     showSignup -> {
                         BackHandler { showSignup = false }
                         SignUpScreen(
-                            onSignupClick = { showSignup = false },
-                            onBackClick = { showSignup = false }
+                            onBackClick = { showSignup = false },
+                            onLoginClick = {
+                                showSignup = false
+                                showLogin = true
+                            }
                         )
                     }
+
                     showHome -> {
                         BackHandler { showHome = false }
                         HomeScreen(
@@ -53,6 +58,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showProfile -> {
                         BackHandler { showProfile = false }
                         ProfileScreen(
@@ -86,6 +92,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showMyHealth -> {
                         BackHandler {
                             showMyHealth = false
@@ -98,6 +105,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showMedications -> {
                         BackHandler {
                             showMedications = false
@@ -114,6 +122,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showAddMedication -> {
                         BackHandler {
                             showAddMedication = false
@@ -126,6 +135,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showFamily -> {
                         BackHandler {
                             showFamily = false
@@ -138,6 +148,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showAppointments -> {
                         BackHandler {
                             showAppointments = false
@@ -154,6 +165,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showAddAppointment -> {
                         BackHandler {
                             showAddAppointment = false
@@ -166,6 +178,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     showAccount -> {
                         BackHandler {
                             showAccount = false
@@ -178,6 +191,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
                     else -> {
                         WelcomeScreen(
                             onLoginClick = { showLogin = true },
