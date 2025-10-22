@@ -3,6 +3,7 @@ package ca.gbc.comp3074.movicareapp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -10,11 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,61 +43,77 @@ fun MedicationsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            repeat(3) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp))
-                {
-                    Row(
+            Column {
+                repeat(3) { index ->
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .padding(vertical = 6.dp),
+                        shape = RoundedCornerShape(6.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = R.drawable.logo),
-                                contentDescription = "Medication Icon",
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text("Medication Name", fontWeight = FontWeight.Bold)
-                                Text("Medication time", fontSize = 14.sp, color = Color.Gray)
-                            }
-                        }
-                        Button(
-                            onClick = { },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFD32F2F),
-                                contentColor = Color.White
-                            )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Remove")
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.medication),
+                                    contentDescription = "Medication Icon",
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        if (index == 0) "Advil" else "Medication Name",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
+                                    )
+                                    Text(
+                                        if (index == 0) "500mg" else "Medication time",
+                                        fontSize = 14.sp,
+                                        color = Color.Gray
+                                    )
+                                }
+                            }
+
+                            Button(
+                                onClick = { },
+                                modifier = Modifier.height(36.dp),
+                                shape = RoundedCornerShape(6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFD32F2F),
+                                    contentColor = Color.White
+                                ),
+                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                            ) {
+                                Text("Remove", fontSize = 14.sp)
+                            }
                         }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = onAddMedicationClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
+                shape = RoundedCornerShape(4.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4865A6),
+                    containerColor = Color(0xFF4CAF50),
                     contentColor = Color.White
                 )
             ) {
-                Text("Add Medication", fontSize = 16.sp)
+                Text("Add Medication", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

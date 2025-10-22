@@ -3,6 +3,7 @@ package ca.gbc.comp3074.movicareapp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -10,11 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,7 +26,7 @@ fun AppointmentsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Appointments") },
+                title = { Text("Appointments", fontSize = 20.sp, fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -44,11 +45,14 @@ fun AppointmentsScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            repeat(2) {
+            repeat(3) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 6.dp)
+                        .padding(vertical = 6.dp),
+                    shape = RoundedCornerShape(6.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -59,44 +63,46 @@ fun AppointmentsScreen(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
-                                painter = painterResource(id = R.drawable.logo),
+                                painter = painterResource(id = R.drawable.appointment),
                                 contentDescription = "Appointment Icon",
                                 modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
+                                    .size(50.dp)
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("Appointment Name", fontWeight = FontWeight.Bold)
-                                Text("Appointment Time", fontSize = 14.sp, color = Color.Gray)
+                                Text("Appointment", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                Text("Day and Time", fontSize = 16.sp, color = Color.Gray)
                             }
                         }
                         Button(
                             onClick = { },
+                            modifier = Modifier.height(40.dp),
+                            shape = MaterialTheme.shapes.small,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFD32F2F),
                                 contentColor = Color.White
                             )
                         ) {
-                            Text("Remove")
+                            Text("Remove", fontSize = 16.sp)
                         }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = onAddAppointmentClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
+                    .height(55.dp),
+                shape = MaterialTheme.shapes.small,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4865A6),
+                    containerColor = Color(0xFF3949AB),
                     contentColor = Color.White
                 )
             ) {
-                Text("Add Appointment", fontSize = 16.sp)
+                Text("Add Appointment", fontSize = 18.sp)
             }
         }
     }
