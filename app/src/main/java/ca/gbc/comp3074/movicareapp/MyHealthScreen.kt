@@ -55,7 +55,7 @@ fun MyHealthScreen(onBackClick: () -> Unit) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        "Michael Angelo",
+                        "Jane Doe",
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )
