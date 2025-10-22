@@ -1,13 +1,11 @@
 package ca.gbc.comp3074.movicareapp
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,132 +17,165 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HomeScreen( onProfileClick: () -> Unit) {
+fun HomeScreen(onProfileClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = 16.dp, vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "Profile",
-                modifier = Modifier.size(48.dp)
+            androidx.compose.foundation.Image(
+                painter = painterResource(id = R.drawable.profile),
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(75.dp)
                     .clickable { onProfileClick() }
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Przemislaw Pawluk", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text("74 YEARS", fontSize = 16.sp, color = Color.Gray)
+                Text("Jane Doe", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                Text("74 YEARS", fontSize = 20.sp, color = Color.Gray)
             }
         }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
-                .background(Color(0xFF80DEEA), shape = RoundedCornerShape(8.dp)),
+                .height(180.dp)
+                .background(Color(0xFF4CAF50), shape = RoundedCornerShape(20.dp)),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("I'm OK", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                Text("Panic button\nhold 3 sec", fontSize = 14.sp, color = Color.White)
+                Text("I'm OK", fontSize = 40.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.Notifications,
+                        contentDescription = "Alarm",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        "Panic button\nhold 3 sec",
+                        fontSize = 20.sp,
+                        color = Color.White,
+                        lineHeight = 18.sp
+                    )
+                }
             }
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .background(Color(0xFFF8F8F8), shape = RoundedCornerShape(14.dp))
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text("MEDICATION", fontWeight = FontWeight.Bold)
-                Text("ADVIL 500mg")
-                Text("12:00 pm")
+                Text("MEDICATION", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(2.dp))
+                Text("ADVIL 500mg", fontSize = 18.sp)
+                Text("1 PILL", fontSize = 18.sp, color = Color.Gray)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("SNOOZER", fontWeight = FontWeight.Bold)
+                Text("SNOOZER", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Button(
-                        onClick = { },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0))
-                    ) {
-                        Text("TAKE")
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0)),
+                        modifier = Modifier.height(38.dp)
+                    ) { Text("TAKE", color = Color.White) }
+                    Spacer(modifier = Modifier.width(10.dp))
                     Button(
-                        onClick = { },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F))
-                    ) {
-                        Text("SNOOZE")
-                    }
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                        modifier = Modifier.height(38.dp)
+                    ) { Text("SNOOZE", color = Color.White) }
                 }
             }
         }
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Appointments", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(8.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Appointments", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.Person,
+                    imageVector = Icons.Filled.Person,
                     contentDescription = "Person",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(24.dp)
+                    tint = Color(0xFFEF6C00),
+                    modifier = Modifier.size(26.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Przemislaw Pawluk")
+                Spacer(modifier = Modifier.width(10.dp))
+                Text("Contact Name", fontSize = 16.sp)
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.Call,
+                    imageVector = Icons.Filled.Call,
                     contentDescription = "Phone",
-                    tint = Color.Gray,
+                    tint = Color(0xFF1565C0),
                     modifier = Modifier.size(20.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("(000)000-0000")
+                Spacer(modifier = Modifier.width(10.dp))
+                Text("(000) 000-0000", fontSize = 15.sp)
             }
         }
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text("Quick Help Request", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(8.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Spacer(modifier = Modifier.width(12.dp))
+            Text("Quick Help Request", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Spacer(modifier = Modifier.width(15.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(80.dp)
-                        .background(Color.Black, shape = RoundedCornerShape(12.dp)),
+                        .height(130.dp)
+                        .background(Color.Black, shape = RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Ride", color = Color.White, fontWeight = FontWeight.Bold)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Filled.Place,
+                            contentDescription = "Ride",
+                            tint = Color.White,
+                            modifier = Modifier.size(50.dp)
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text("Ride", fontSize = 25.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                    }
                 }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(80.dp)
-                        .background(Color.LightGray, shape = RoundedCornerShape(12.dp)),
+                        .height(130.dp)
+                        .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Assistance", fontWeight = FontWeight.Bold)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Filled.Phone,
+                            contentDescription = "Assistance",
+                            tint = Color.Black,
+                            modifier = Modifier.size(50.dp)
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text("Assistance", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
