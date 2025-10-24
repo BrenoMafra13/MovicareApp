@@ -1,5 +1,6 @@
 package ca.gbc.comp3074.movicareapp
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,41 +8,107 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
+import ca.gbc.comp3074.movicareapp.data.db.UserEntity
 
 @Composable
-fun HomeScreen(onProfileClick: () -> Unit) {
+fun HomeScreen(
+    userId: Long,
+    onAvatarClick: () -> Unit = {},
+    onEditProfile: () -> Unit = {},
+    onSettings: () -> Unit = {},
+    onLogout: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val userDao = remember { AppDatabase.getInstance(context).userDao() }
+
+    var user by remember { mutableStateOf<UserEntity?>(null) }
+    var menuOpen by remember { mutableStateOf(false) }
+
+    // Load the user by ID from Room
+    LaunchedEffect(userId) {
+        user = userDao.getById(userId) // suspend fun getById(id: Long): UserEntity?
+    }
+
+    val fullName = user?.fullName?.takeIf { it.isNotBlank() } ?: "User #$userId"
+    val subtitle = user?.role?.uppercase() ?: "ROLE"
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        // Header: avatar + name/role + overflow menu
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            androidx.compose.foundation.Image(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(75.dp)
-                    .clickable { onProfileClick() }
-            )
+            Box {
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = "Profile picture",
+                    modifier = Modifier
+                        .size(75.dp)
+                        .clickable { menuOpen = true }
+                )
+                DropdownMenu(
+                    expanded = menuOpen,
+                    onDismissRequest = { menuOpen = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("View profile") },
+                        leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
+                        onClick = {
+                            menuOpen = false
+                            onAvatarClick()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Edit profile") },
+                        leadingIcon = { Icon(Icons.Filled.Edit, contentDescription = null) },
+                        onClick = {
+                            menuOpen = false
+                            onEditProfile()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Settings") },
+                        leadingIcon = { Icon(Icons.Filled.Settings, contentDescription = null) },
+                        onClick = {
+                            menuOpen = false
+                            onSettings()
+                        }
+                    )
+                    Divider()
+                    DropdownMenuItem(
+                        text = { Text("Sign out") },
+                        leadingIcon = { Icon(Icons.Filled.ExitToApp, contentDescription = null) },
+                        onClick = {
+                            menuOpen = false
+                            onLogout()
+                        }
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Jane Doe", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                Text("74 YEARS", fontSize = 20.sp, color = Color.Gray)
+                Text(fullName, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                Text(subtitle, fontSize = 20.sp, color = Color.Gray)
             }
         }
 
+        // Green status card with panic hint
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -70,6 +137,7 @@ fun HomeScreen(onProfileClick: () -> Unit) {
             }
         }
 
+        // Medication card
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,17 +153,17 @@ fun HomeScreen(onProfileClick: () -> Unit) {
                 Text("1 PILL", fontSize = 18.sp, color = Color.Gray)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("SNOOZER", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text("REMINDER", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Button(
-                        onClick = {},
+                        onClick = { /* TODO: mark as taken */ },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0)),
                         modifier = Modifier.height(38.dp)
                     ) { Text("TAKE", color = Color.White) }
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
-                        onClick = {},
+                        onClick = { /* TODO: snooze */ },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
                         modifier = Modifier.height(38.dp)
                     ) { Text("SNOOZE", color = Color.White) }
@@ -103,6 +171,7 @@ fun HomeScreen(onProfileClick: () -> Unit) {
             }
         }
 
+        // Appointments / contact
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -130,6 +199,7 @@ fun HomeScreen(onProfileClick: () -> Unit) {
             }
         }
 
+        // Quick Help
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -181,3 +251,4 @@ fun HomeScreen(onProfileClick: () -> Unit) {
         }
     }
 }
+
