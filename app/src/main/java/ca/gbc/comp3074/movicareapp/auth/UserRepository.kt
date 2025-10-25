@@ -16,15 +16,15 @@ class UserRepository(private val db: AppDatabase) {
                 val p = password
 
                 if (u.isEmpty() || p.isEmpty()) {
-                    return@withContext Result.failure(IllegalArgumentException("Ingrese usuario y contraseña"))
+                    return@withContext Result.failure(IllegalArgumentException("Enter username and password"))
                 }
 
                 val user = userDao.getByUsername(u)
-                    ?: return@withContext Result.failure(Exception("Usuario no encontrado"))
+                    ?: return@withContext Result.failure(Exception("User not found"))
 
                 val ok = PasswordUtils.verify(p, user.salt, user.passwordHash)
                 if (!ok) {
-                    return@withContext Result.failure(Exception("Credenciales inválidas"))
+                    return@withContext Result.failure(Exception("Invalid credentials"))
                 }
 
                 Result.success(user.id to user.role)
@@ -45,19 +45,17 @@ class UserRepository(private val db: AppDatabase) {
             val u = username.trim()
             val mail = email.trim()
             if (fullName.isBlank() || u.isBlank() || mail.isBlank() || password.isBlank()) {
-                return@withContext Result.failure(IllegalArgumentException("Complete todos los campos"))
+                return@withContext Result.failure(IllegalArgumentException("Please fill in all fields"))
             }
 
-            // ¿usuario ya existe?
             if (userDao.getByUsername(u) != null) {
-                return@withContext Result.failure(IllegalStateException("El usuario ya existe"))
+                return@withContext Result.failure(IllegalStateException("User already exists"))
             }
 
             val saltB64 = PasswordUtils.newSaltB64()
             val hashB64 = PasswordUtils.hashB64(password, saltB64)
 
             val entity = UserEntity(
-                // id autogenerado por Room
                 fullName = fullName,
                 username = u,
                 email = mail,

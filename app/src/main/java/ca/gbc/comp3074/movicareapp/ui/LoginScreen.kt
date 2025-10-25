@@ -32,7 +32,7 @@ fun LoginScreen(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // Navegar SOLO si hay userId y role
+    // userId y role
     LaunchedEffect(ui.userId, ui.successRole) {
         val id = ui.userId
         val role = ui.successRole

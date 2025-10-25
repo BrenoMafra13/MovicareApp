@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
 import ca.gbc.comp3074.movicareapp.data.db.UserEntity
+import coil.compose.AsyncImage
+import java.io.File
 
 @Composable
 fun HomeScreen(
@@ -32,15 +34,14 @@ fun HomeScreen(
     val userDao = remember { AppDatabase.getInstance(context).userDao() }
 
     var user by remember { mutableStateOf<UserEntity?>(null) }
-    var menuOpen by remember { mutableStateOf(false) }
 
-    // Load the user by ID from Room
     LaunchedEffect(userId) {
-        user = userDao.getById(userId) // suspend fun getById(id: Long): UserEntity?
+        user = userDao.getById(userId)
     }
 
     val fullName = user?.fullName?.takeIf { it.isNotBlank() } ?: "User #$userId"
     val subtitle = user?.role?.uppercase() ?: "ROLE"
+    val avatarPath = user?.avatarUri
 
     Column(
         modifier = Modifier
@@ -48,57 +49,26 @@ fun HomeScreen(
             .padding(horizontal = 16.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        // Header: avatar + name/role + overflow menu
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Box {
+            if (avatarPath.isNullOrBlank()) {
                 Image(
                     painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Profile picture",
                     modifier = Modifier
                         .size(75.dp)
-                        .clickable { menuOpen = true }
+                        .clickable { onAvatarClick() }
                 )
-                DropdownMenu(
-                    expanded = menuOpen,
-                    onDismissRequest = { menuOpen = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("View profile") },
-                        leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
-                        onClick = {
-                            menuOpen = false
-                            onAvatarClick()
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Edit profile") },
-                        leadingIcon = { Icon(Icons.Filled.Edit, contentDescription = null) },
-                        onClick = {
-                            menuOpen = false
-                            onEditProfile()
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Settings") },
-                        leadingIcon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                        onClick = {
-                            menuOpen = false
-                            onSettings()
-                        }
-                    )
-                    Divider()
-                    DropdownMenuItem(
-                        text = { Text("Sign out") },
-                        leadingIcon = { Icon(Icons.Filled.ExitToApp, contentDescription = null) },
-                        onClick = {
-                            menuOpen = false
-                            onLogout()
-                        }
-                    )
-                }
+            } else {
+                AsyncImage(
+                    model = File(avatarPath),
+                    contentDescription = "Profile picture",
+                    modifier = Modifier
+                        .size(75.dp)
+                        .clickable { onAvatarClick() }
+                )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -108,7 +78,6 @@ fun HomeScreen(
             }
         }
 
-        // Green status card with panic hint
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,7 +106,6 @@ fun HomeScreen(
             }
         }
 
-        // Medication card
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -157,13 +125,13 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Button(
-                        onClick = { /* TODO: mark as taken */ },
+                        onClick = { },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0)),
                         modifier = Modifier.height(38.dp)
                     ) { Text("TAKE", color = Color.White) }
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
-                        onClick = { /* TODO: snooze */ },
+                        onClick = { },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
                         modifier = Modifier.height(38.dp)
                     ) { Text("SNOOZE", color = Color.White) }
@@ -171,7 +139,6 @@ fun HomeScreen(
             }
         }
 
-        // Appointments / contact
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -199,7 +166,6 @@ fun HomeScreen(
             }
         }
 
-        // Quick Help
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -251,4 +217,3 @@ fun HomeScreen(
         }
     }
 }
-

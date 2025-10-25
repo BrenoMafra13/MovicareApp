@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ca.gbc.comp3074.movicareapp.auth.AuthViewModel
+import coil.compose.AsyncImage
 
 private val roles = listOf("senior","family","caregiver","volunteer")
 
@@ -49,7 +50,6 @@ fun SignUpScreen(
         ActivityResultContracts.PickVisualMedia()
     ) { uri -> avatarUri = uri?.toString() }
 
-    // Navega cuando hay userId y role
     LaunchedEffect(ui.userId, ui.successRole) {
         val id = ui.userId
         val r = ui.successRole
@@ -81,12 +81,20 @@ fun SignUpScreen(
         ) {
             Spacer(Modifier.height(32.dp))
 
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Profile Avatar",
-                tint = Color.Gray,
-                modifier = Modifier.size(120.dp)
-            )
+            if (avatarUri == null) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile Avatar",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(120.dp)
+                )
+            } else {
+                AsyncImage(
+                    model = avatarUri,
+                    contentDescription = "Selected Avatar",
+                    modifier = Modifier.size(120.dp)
+                )
+            }
             TextButton(onClick = {
                 picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }) { Text(if (avatarUri == null) "Choose photo" else "Change photo") }
@@ -167,10 +175,7 @@ fun SignUpScreen(
 
             Button(
                 onClick = {
-                    if (password != confirm) {
-                        // feedback local rápido
-                        return@Button
-                    }
+                    if (password != confirm) return@Button
                     vm.signUp(
                         fullName.trim(),
                         username.trim(),
@@ -189,7 +194,13 @@ fun SignUpScreen(
                     contentColor = Color.White
                 ),
                 shape = MaterialTheme.shapes.small
-            ) { Text(if (ui.loading) "Creating…" else "Sign Up", fontSize = 18.sp, fontWeight = FontWeight.Medium) }
+            ) {
+                Text(
+                    if (ui.loading) "Creating…" else "Sign Up",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
 
             Spacer(Modifier.height(20.dp))
 

@@ -6,10 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import ca.gbc.comp3074.movicareapp.WelcomeScreen
-import ca.gbc.comp3074.movicareapp.LoginScreen
-import ca.gbc.comp3074.movicareapp.SignUpScreen
-import ca.gbc.comp3074.movicareapp.HomeScreen
+import ca.gbc.comp3074.movicareapp.*
 
 @Composable
 fun AppNavHost() {
@@ -17,15 +14,13 @@ fun AppNavHost() {
 
     NavHost(navController = nav, startDestination = "welcome") {
 
-        // WELCOME
         composable("welcome") {
             WelcomeScreen(
                 onLoginClick = { nav.navigate("login") },
-                onSignupClick = { nav.navigate("signup") } // <- nombre correcto
+                onSignupClick = { nav.navigate("signup") }
             )
         }
 
-        // LOGIN
         composable("login") {
             LoginScreen(
                 onBackClick = { nav.popBackStack() },
@@ -39,12 +34,11 @@ fun AppNavHost() {
             )
         }
 
-        // SIGN UP
         composable("signup") {
             SignUpScreen(
                 onBackClick = { nav.popBackStack() },
-                onRegistrationSuccess = { userId, _ ->
-                    nav.navigate("home/$userId") {
+                onRegistrationSuccess = { _, _ ->
+                    nav.navigate("login") {
                         popUpTo("welcome") { inclusive = false }
                         launchSingleTop = true
                     }
@@ -58,18 +52,18 @@ fun AppNavHost() {
             )
         }
 
+        // HOME
         composable(
             route = "home/{userId}",
-            arguments = listOf(
-                navArgument("userId") { type = NavType.LongType }
-            )
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
         ) { entry ->
-            val userId = requireNotNull(entry.arguments?.getLong("userId")) { "userId es requerido" }
+            val userId = requireNotNull(entry.arguments?.getLong("userId")) { "userId is required" }
+
             HomeScreen(
                 userId = userId,
-                onAvatarClick = {  },
-                onEditProfile = { },
-                onSettings = {  },
+                onAvatarClick = { nav.navigate("profile/$userId") },
+                onEditProfile = { nav.navigate("account") },
+                onSettings = { nav.navigate("account") },
                 onLogout = {
                     nav.navigate("welcome") {
                         popUpTo(0)
@@ -78,5 +72,49 @@ fun AppNavHost() {
                 }
             )
         }
+
+        // PROFILE
+        composable(
+            route = "profile/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) { entry ->
+            val userId = requireNotNull(entry.arguments?.getLong("userId")) { "userId is required" }
+            ProfileScreen(
+                userId = userId,
+                onBackClick = { nav.popBackStack() },
+                onLogoutClick = {
+                    nav.navigate("welcome") {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                },
+                onMyHealthClick = { nav.navigate("myHealth") },
+                onMedicationsClick = { nav.navigate("medications") },
+                onFamilyClick = { nav.navigate("familyMembers") },
+                onAppointmentsClick = { nav.navigate("appointments") },
+                onAccountClick = { nav.navigate("account") }
+            )
+        }
+
+        composable("myHealth") { MyHealthScreen(onBackClick = { nav.popBackStack() }) }
+
+        composable("medications") {
+            MedicationsScreen(
+                onBackClick = { nav.popBackStack() },
+                onAddMedicationClick = { nav.navigate("addMedication") }
+            )
+        }
+        composable("addMedication") { AddMedicationScreen(onBackClick = { nav.popBackStack() }) }
+
+        composable("appointments") {
+            AppointmentsScreen(
+                onBackClick = { nav.popBackStack() },
+                onAddAppointmentClick = { nav.navigate("addAppointment") }
+            )
+        }
+        composable("addAppointment") { AddAppointmentScreen(onBackClick = { nav.popBackStack() }) }
+
+        composable("familyMembers") { FamilyMembersScreen(onBackClick = { nav.popBackStack() }) }
+        composable("account") { AccountScreen(onBackClick = { nav.popBackStack() }) }
     }
 }
