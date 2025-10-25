@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
 import ca.gbc.comp3074.movicareapp.data.db.UserEntity
 import coil.compose.AsyncImage
-import java.io.File
 
 @Composable
 fun HomeScreen(
@@ -41,7 +40,7 @@ fun HomeScreen(
 
     val fullName = user?.fullName?.takeIf { it.isNotBlank() } ?: "User #$userId"
     val subtitle = user?.role?.uppercase() ?: "ROLE"
-    val avatarPath = user?.avatarUri
+    val avatarUri = user?.avatarUri
 
     Column(
         modifier = Modifier
@@ -53,7 +52,7 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (avatarPath.isNullOrBlank()) {
+            if (avatarUri.isNullOrBlank()) {
                 Image(
                     painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Profile picture",
@@ -63,7 +62,9 @@ fun HomeScreen(
                 )
             } else {
                 AsyncImage(
-                    model = File(avatarPath),
+                    model = avatarUri, // <-- pasa el content Uri / String directamente
+                    placeholder = painterResource(R.drawable.profile),
+                    error = painterResource(R.drawable.profile),
                     contentDescription = "Profile picture",
                     modifier = Modifier
                         .size(75.dp)
