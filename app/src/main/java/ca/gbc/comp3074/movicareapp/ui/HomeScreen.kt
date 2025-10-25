@@ -1,5 +1,6 @@
 package ca.gbc.comp3074.movicareapp
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,17 +8,40 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
+import ca.gbc.comp3074.movicareapp.data.db.UserEntity
+import coil.compose.AsyncImage
 
 @Composable
-fun HomeScreen(onProfileClick: () -> Unit) {
+fun HomeScreen(
+    userId: Long,
+    onAvatarClick: () -> Unit = {},
+    onEditProfile: () -> Unit = {},
+    onSettings: () -> Unit = {},
+    onLogout: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val userDao = remember { AppDatabase.getInstance(context).userDao() }
+
+    var user by remember { mutableStateOf<UserEntity?>(null) }
+
+    LaunchedEffect(userId) {
+        user = userDao.getById(userId)
+    }
+
+    val fullName = user?.fullName?.takeIf { it.isNotBlank() } ?: "User #$userId"
+    val subtitle = user?.role?.uppercase() ?: "ROLE"
+    val avatarUri = user?.avatarUri
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -28,17 +52,30 @@ fun HomeScreen(onProfileClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            androidx.compose.foundation.Image(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(75.dp)
-                    .clickable { onProfileClick() }
-            )
+            if (avatarUri.isNullOrBlank()) {
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = "Profile picture",
+                    modifier = Modifier
+                        .size(75.dp)
+                        .clickable { onAvatarClick() }
+                )
+            } else {
+                AsyncImage(
+                    model = avatarUri, // <-- pasa el content Uri / String directamente
+                    placeholder = painterResource(R.drawable.profile),
+                    error = painterResource(R.drawable.profile),
+                    contentDescription = "Profile picture",
+                    modifier = Modifier
+                        .size(75.dp)
+                        .clickable { onAvatarClick() }
+                )
+            }
+
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Jane Doe", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                Text("74 YEARS", fontSize = 20.sp, color = Color.Gray)
+                Text(fullName, fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                Text(subtitle, fontSize = 20.sp, color = Color.Gray)
             }
         }
 
@@ -85,17 +122,17 @@ fun HomeScreen(onProfileClick: () -> Unit) {
                 Text("1 PILL", fontSize = 18.sp, color = Color.Gray)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("SNOOZER", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text("REMINDER", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(10.dp))
                 Row {
                     Button(
-                        onClick = {},
+                        onClick = { },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0)),
                         modifier = Modifier.height(38.dp)
                     ) { Text("TAKE", color = Color.White) }
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
-                        onClick = {},
+                        onClick = { },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
                         modifier = Modifier.height(38.dp)
                     ) { Text("SNOOZE", color = Color.White) }

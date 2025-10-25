@@ -6,7 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,13 +16,33 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ca.gbc.comp3074.movicareapp.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onLoginSuccess: (userId: Long, role: String) -> Unit,
+    onGoToSignUp: () -> Unit
 ) {
+    val vm: AuthViewModel = viewModel()
+    val ui by vm.loginUi.collectAsState()
+
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    // userId y role
+    LaunchedEffect(ui.userId, ui.successRole) {
+        val id = ui.userId
+        val role = ui.successRole
+        if (id != null && role != null) {
+            onLoginSuccess(id, role)
+        }
+    }
+
+    val canLogin = username.isNotBlank() && password.isNotBlank()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,8 +77,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = username,
+                onValueChange = { username = it },
                 label = { Text("Username") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -66,21 +86,27 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = password,
+                onValueChange = { password = it },
                 label = { Text("Password") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth()
             )
 
+            ui.error?.let {
+                Spacer(Modifier.height(8.dp))
+                Text(it, color = MaterialTheme.colorScheme.error)
+            }
+
             Spacer(modifier = Modifier.height(28.dp))
 
             Button(
-                onClick = onLoginClick,
+                onClick = { vm.login(username, password) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
+                enabled = canLogin && !ui.loading,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF2AB3A3),
                     contentColor = Color.White
@@ -88,11 +114,13 @@ fun LoginScreen(
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    "Log In",
+                    if (ui.loading) "Signing in…" else "Log In",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
+
+            TextButton(onClick = onGoToSignUp) { Text("Create an account") }
         }
     }
 }
