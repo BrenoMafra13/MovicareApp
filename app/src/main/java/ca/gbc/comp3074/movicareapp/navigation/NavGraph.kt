@@ -90,7 +90,7 @@ fun AppNavHost() {
                 },
                 onMyHealthClick = { nav.navigate("myHealth") },
                 onMedicationsClick = { nav.navigate("medications") },
-                onFamilyClick = { nav.navigate("familyMembers") },
+                onFamilyClick = { nav.navigate("familyMembers/$userId") },
                 onAppointmentsClick = { nav.navigate("appointments") },
                 onAccountClick = { nav.navigate("account") }
             )
@@ -114,7 +114,19 @@ fun AppNavHost() {
         }
         composable("addAppointment") { AddAppointmentScreen(onBackClick = { nav.popBackStack() }) }
 
-        composable("familyMembers") { FamilyMembersScreen(onBackClick = { nav.popBackStack() }) }
+        // FAMILY MEMBERS
+        composable(
+            route = "familyMembers/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) { entry ->
+            val userId = requireNotNull(entry.arguments?.getLong("userId")) { "userId is required" }
+
+            FamilyMembersScreen(
+                userId = userId,
+                onBackClick = { nav.popBackStack() }
+            )
+        }
+
         composable("account") { AccountScreen(onBackClick = { nav.popBackStack() }) }
     }
 }
