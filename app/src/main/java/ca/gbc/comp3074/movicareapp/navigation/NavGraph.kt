@@ -57,7 +57,7 @@ fun AppNavHost() {
             route = "home/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.LongType })
         ) { entry ->
-            val userId = requireNotNull(entry.arguments?.getLong("userId")) { "userId is required" }
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
 
             HomeScreen(
                 userId = userId,
@@ -78,7 +78,7 @@ fun AppNavHost() {
             route = "profile/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.LongType })
         ) { entry ->
-            val userId = requireNotNull(entry.arguments?.getLong("userId")) { "userId is required" }
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
             ProfileScreen(
                 userId = userId,
                 onBackClick = { nav.popBackStack() },
@@ -89,37 +89,65 @@ fun AppNavHost() {
                     }
                 },
                 onMyHealthClick = { nav.navigate("myHealth") },
-                onMedicationsClick = { nav.navigate("medications") },
+                onMedicationsClick = { nav.navigate("medications/$userId") },
                 onFamilyClick = { nav.navigate("familyMembers/$userId") },
-                onAppointmentsClick = { nav.navigate("appointments") },
+                onAppointmentsClick = { nav.navigate("appointments/$userId") },
                 onAccountClick = { nav.navigate("account") }
             )
         }
 
         composable("myHealth") { MyHealthScreen(onBackClick = { nav.popBackStack() }) }
 
-        composable("medications") {
+        composable(
+            route = "medications/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) { entry ->
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
             MedicationsScreen(
+                userId = userId,
                 onBackClick = { nav.popBackStack() },
-                onAddMedicationClick = { nav.navigate("addMedication") }
+                onAddMedicationClick = { nav.navigate("addMedication/$userId") }
             )
         }
-        composable("addMedication") { AddMedicationScreen(onBackClick = { nav.popBackStack() }) }
+        composable(
+            route = "addMedication/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) { entry ->
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
+            AddMedicationScreen(
+                userId = userId,
+                onBackClick = { nav.popBackStack() }
+            )
+        }
 
-        composable("appointments") {
+        composable(
+            route = "appointments/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) { entry ->
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
             AppointmentsScreen(
+                userId = userId,
                 onBackClick = { nav.popBackStack() },
-                onAddAppointmentClick = { nav.navigate("addAppointment") }
+                onAddAppointmentClick = { nav.navigate("addAppointment/$userId") }
             )
         }
-        composable("addAppointment") { AddAppointmentScreen(onBackClick = { nav.popBackStack() }) }
+        composable(
+            route = "addAppointment/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+        ) { entry ->
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
+            AddAppointmentScreen(
+                userId = userId,
+                onBackClick = { nav.popBackStack() }
+            )
+        }
 
         // FAMILY MEMBERS
         composable(
             route = "familyMembers/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.LongType })
         ) { entry ->
-            val userId = requireNotNull(entry.arguments?.getLong("userId")) { "userId is required" }
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
 
             FamilyMembersScreen(
                 userId = userId,

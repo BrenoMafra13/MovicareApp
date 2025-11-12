@@ -6,14 +6,21 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [UserEntity::class, FamilyMemberEntity::class],
-    version = 4,
+    entities = [
+        UserEntity::class,
+        FamilyMemberEntity::class,
+        MedicationEntity::class,
+        AppointmentEntity::class
+    ],
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun familyMemberDao(): FamilyMemberDao
+    abstract fun medicationDao(): MedicationDao
+    abstract fun appointmentDao(): AppointmentDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
@@ -32,4 +39,3 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 }
-

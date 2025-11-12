@@ -32,7 +32,6 @@ fun LoginScreen(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    // userId y role
     LaunchedEffect(ui.userId, ui.successRole) {
         val id = ui.userId
         val role = ui.successRole
