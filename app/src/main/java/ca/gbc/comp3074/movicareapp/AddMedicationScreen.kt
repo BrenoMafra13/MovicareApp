@@ -11,21 +11,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
+import ca.gbc.comp3074.movicareapp.data.db.MedicationEntity
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMedicationScreen(
+    userId: Long,
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val medicationDao = remember { AppDatabase.getInstance(context).medicationDao() }
+    val scope = rememberCoroutineScope()
+
     var medicationName by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
+    val canSave = medicationName.isNotBlank() && dosage.isNotBlank() && day.isNotBlank() && time.isNotBlank()
 
     Scaffold(
         topBar = {
@@ -133,7 +143,27 @@ fun AddMedicationScreen(
                 }
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        if (canSave) {
+                            scope.launch {
+                                medicationDao.insertMedication(
+                                    MedicationEntity(
+                                        ownerUserId = userId,
+                                        name = medicationName.trim(),
+                                        dosage = dosage.trim(),
+                                        day = day.trim(),
+                                        time = time.trim()
+                                    )
+                                )
+                                medicationName = ""
+                                dosage = ""
+                                day = ""
+                                time = ""
+                                onBackClick()
+                            }
+                        }
+                    },
+                    enabled = canSave,
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp)

@@ -5,18 +5,32 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Color
+import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
+import ca.gbc.comp3074.movicareapp.data.db.AppointmentEntity
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddAppointmentScreen(
+    userId: Long,
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val appointmentDao = remember { AppDatabase.getInstance(context).appointmentDao() }
+    val scope = rememberCoroutineScope()
+
+    var appointmentType by remember { mutableStateOf("") }
+    var day by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf("") }
+    val canSave = appointmentType.isNotBlank() && day.isNotBlank() && time.isNotBlank()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -41,8 +55,8 @@ fun AddAppointmentScreen(
             verticalArrangement = Arrangement.Top
         ) {
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = appointmentType,
+                onValueChange = { appointmentType = it },
                 label = { Text("Appointment type") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -50,8 +64,8 @@ fun AddAppointmentScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = day,
+                onValueChange = { day = it },
                 label = { Text("Day") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -59,8 +73,8 @@ fun AddAppointmentScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = time,
+                onValueChange = { time = it },
                 label = { Text("Time") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -87,7 +101,25 @@ fun AddAppointmentScreen(
                 }
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        if (canSave) {
+                            scope.launch {
+                                appointmentDao.insertAppointment(
+                                    AppointmentEntity(
+                                        ownerUserId = userId,
+                                        type = appointmentType.trim(),
+                                        day = day.trim(),
+                                        time = time.trim()
+                                    )
+                                )
+                                appointmentType = ""
+                                day = ""
+                                time = ""
+                                onBackClick()
+                            }
+                        }
+                    },
+                    enabled = canSave,
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp)
