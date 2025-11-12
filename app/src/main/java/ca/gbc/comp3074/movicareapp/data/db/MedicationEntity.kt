@@ -22,6 +22,7 @@ data class MedicationEntity(
     val ownerUserId: Long,
     val name: String,
     val dosage: String,
-    val day: String,
-    val time: String
+    val time: String,
+    val startDate: String? = null,
+    val endDate: String? = null
 )

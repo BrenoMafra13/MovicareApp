@@ -15,6 +15,6 @@ interface MedicationDao {
     @Delete
     suspend fun deleteMedication(medication: MedicationEntity)
 
-    @Query("SELECT * FROM medications WHERE ownerUserId = :userId ORDER BY day, time")
+    @Query("SELECT * FROM medications WHERE ownerUserId = :userId ORDER BY startDate, time")
     fun getMedicationsByUserId(userId: Long): Flow<List<MedicationEntity>>
 }

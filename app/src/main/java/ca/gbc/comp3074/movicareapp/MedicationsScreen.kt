@@ -143,6 +143,14 @@ fun MedicationCard(
     scope: CoroutineScope,
     medicationDao: MedicationDao
 ) {
+    val scheduleText = when {
+        !medication.startDate.isNullOrBlank() && !medication.endDate.isNullOrBlank() ->
+            "${medication.startDate} - ${medication.endDate}"
+        !medication.startDate.isNullOrBlank() -> medication.startDate
+        !medication.endDate.isNullOrBlank() -> medication.endDate
+        else -> "No date range set"
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(6.dp),
@@ -166,7 +174,7 @@ fun MedicationCard(
                 Column {
                     Text(medication.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Text(medication.dosage, fontSize = 14.sp, color = Color.Gray)
-                    Text("${medication.day} at ${medication.time}", fontSize = 13.sp, color = Color.Gray)
+                    Text("$scheduleText - ${medication.time}", fontSize = 13.sp, color = Color.Gray)
                 }
             }
 

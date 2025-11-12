@@ -1,9 +1,15 @@
 package ca.gbc.comp3074.movicareapp
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +21,10 @@ import androidx.compose.ui.unit.sp
 import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
 import ca.gbc.comp3074.movicareapp.data.db.AppointmentEntity
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +40,38 @@ fun AddAppointmentScreen(
     var day by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
     val canSave = appointmentType.isNotBlank() && day.isNotBlank() && time.isNotBlank()
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()) }
+    val timeFormatter = remember { DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault()) }
+    val dateInteraction = remember { MutableInteractionSource() }
+    val timeInteraction = remember { MutableInteractionSource() }
+
+    fun openDatePicker() {
+        val today = LocalDate.now()
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val picked = LocalDate.of(year, month + 1, dayOfMonth)
+                day = picked.format(dateFormatter)
+            },
+            today.year,
+            today.monthValue - 1,
+            today.dayOfMonth
+        ).show()
+    }
+
+    fun openTimePicker() {
+        val now = LocalTime.now()
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                val picked = LocalTime.of(hourOfDay, minute)
+                time = picked.format(timeFormatter)
+            },
+            now.hour,
+            now.minute,
+            false
+        ).show()
+    }
 
     Scaffold(
         topBar = {
@@ -63,21 +105,59 @@ fun AddAppointmentScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
-                value = day,
-                onValueChange = { day = it },
-                label = { Text("Day") },
+            Box(
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                OutlinedTextField(
+                    value = day,
+                    onValueChange = { },
+                    label = { Text("Day") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.CalendarMonth,
+                            contentDescription = "Pick date"
+                        )
+                    }
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable(
+                            interactionSource = dateInteraction,
+                            indication = null
+                        ) { openDatePicker() }
+                )
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            OutlinedTextField(
-                value = time,
-                onValueChange = { time = it },
-                label = { Text("Time") },
+            Box(
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                OutlinedTextField(
+                    value = time,
+                    onValueChange = { },
+                    label = { Text("Time") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.AccessTime,
+                            contentDescription = "Pick time"
+                        )
+                    }
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable(
+                            interactionSource = timeInteraction,
+                            indication = null
+                        ) { openTimePicker() }
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

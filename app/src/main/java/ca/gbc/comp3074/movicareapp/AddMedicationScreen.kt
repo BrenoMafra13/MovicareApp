@@ -1,11 +1,17 @@
 package ca.gbc.comp3074.movicareapp
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,12 +20,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.gbc.comp3074.movicareapp.data.db.AppDatabase
 import ca.gbc.comp3074.movicareapp.data.db.MedicationEntity
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,9 +43,49 @@ fun AddMedicationScreen(
 
     var medicationName by remember { mutableStateOf("") }
     var dosage by remember { mutableStateOf("") }
-    var day by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
-    val canSave = medicationName.isNotBlank() && dosage.isNotBlank() && day.isNotBlank() && time.isNotBlank()
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
+
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()) }
+    val timeFormatter = remember { DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault()) }
+    val startDateInteraction = remember { MutableInteractionSource() }
+    val endDateInteraction = remember { MutableInteractionSource() }
+    val timeInteraction = remember { MutableInteractionSource() }
+
+    val canSave = medicationName.isNotBlank() &&
+        dosage.isNotBlank() &&
+        time.isNotBlank() &&
+        startDate.isNotBlank() &&
+        endDate.isNotBlank()
+
+    fun showDatePicker(onDateSelected: (String) -> Unit) {
+        val today = LocalDate.now()
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val picked = LocalDate.of(year, month + 1, dayOfMonth)
+                onDateSelected(picked.format(dateFormatter))
+            },
+            today.year,
+            today.monthValue - 1,
+            today.dayOfMonth
+        ).show()
+    }
+
+    fun openTimePicker() {
+        val now = LocalTime.now()
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                val picked = LocalTime.of(hourOfDay, minute)
+                time = picked.format(timeFormatter)
+            },
+            now.hour,
+            now.minute,
+            false
+        ).show()
+    }
 
     Scaffold(
         topBar = {
@@ -93,33 +143,105 @@ fun AddMedicationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 4.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
                 singleLine = true
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text("Day", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            OutlinedTextField(
-                value = day,
-                onValueChange = { day = it },
+            Text("Start date", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
-                singleLine = true
-            )
+                    .padding(top = 4.dp)
+            ) {
+                OutlinedTextField(
+                    value = startDate,
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    readOnly = true,
+                    placeholder = { Text("Select start date") },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.CalendarMonth,
+                            contentDescription = "Pick date"
+                        )
+                    }
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable(
+                            interactionSource = startDateInteraction,
+                            indication = null
+                        ) { showDatePicker { startDate = it } }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("End date", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            ) {
+                OutlinedTextField(
+                    value = endDate,
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    readOnly = true,
+                    placeholder = { Text("Select end date") },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.CalendarMonth,
+                            contentDescription = "Pick date"
+                        )
+                    }
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable(
+                            interactionSource = endDateInteraction,
+                            indication = null
+                        ) { showDatePicker { endDate = it } }
+                )
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Text("Time", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            OutlinedTextField(
-                value = time,
-                onValueChange = { time = it },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
-                singleLine = true
-            )
+                    .padding(top = 4.dp)
+            ) {
+                OutlinedTextField(
+                    value = time,
+                    onValueChange = { },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    readOnly = true,
+                    placeholder = { Text("Select a time") },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.AccessTime,
+                            contentDescription = "Pick time"
+                        )
+                    }
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable(
+                            interactionSource = timeInteraction,
+                            indication = null
+                        ) { openTimePicker() }
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -151,14 +273,16 @@ fun AddMedicationScreen(
                                         ownerUserId = userId,
                                         name = medicationName.trim(),
                                         dosage = dosage.trim(),
-                                        day = day.trim(),
-                                        time = time.trim()
+                                        time = time.trim(),
+                                        startDate = startDate.trim(),
+                                        endDate = endDate.trim()
                                     )
                                 )
                                 medicationName = ""
                                 dosage = ""
-                                day = ""
                                 time = ""
+                                startDate = ""
+                                endDate = ""
                                 onBackClick()
                             }
                         }
