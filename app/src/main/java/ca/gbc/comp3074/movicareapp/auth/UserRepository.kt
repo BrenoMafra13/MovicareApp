@@ -39,7 +39,10 @@ class UserRepository(private val db: AppDatabase) {
         email: String,
         password: String,
         role: String,
-        avatarUri: String?
+        avatarUri: String?,
+        street: String?,
+        unit: String?,
+        postalCode: String?
     ): Result<Pair<Long, String>> = withContext(Dispatchers.IO) {
         try {
             val u = username.trim()
@@ -62,7 +65,10 @@ class UserRepository(private val db: AppDatabase) {
                 passwordHash = hashB64,
                 salt = saltB64,
                 role = role,
-                avatarUri = avatarUri
+                avatarUri = avatarUri,
+                street = street,
+                unit = unit,
+                postalCode = postalCode
             )
 
             val id = userDao.insert(entity)
