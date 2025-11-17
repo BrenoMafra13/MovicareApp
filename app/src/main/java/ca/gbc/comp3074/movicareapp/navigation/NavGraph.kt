@@ -155,6 +155,16 @@ fun AppNavHost() {
             )
         }
 
-        composable("account") { AccountScreen(onBackClick = { nav.popBackStack() }) }
+        composable(
+            route = "account/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+            ) { entry ->
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
+
+            AccountScreen(
+                userId = userId,
+                onBackClick = { nav.popBackStack() }
+            )
+        }
     }
 }
