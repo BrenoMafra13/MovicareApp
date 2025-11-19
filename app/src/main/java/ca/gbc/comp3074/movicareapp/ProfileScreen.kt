@@ -63,6 +63,22 @@ fun ProfileScreen(
     val name = user?.fullName ?: "User #$userId"
     val role = user?.role?.uppercase() ?: "SENIOR"
     val avatar = user?.avatarUri
+    val street = user?.street
+    val unit = user?.unit
+    val postalCode = user?.postalCode
+
+    var address = "Not set"
+    if(!street.isNullOrBlank() && unit.isNullOrBlank() && postalCode.isNullOrBlank()) {
+        address = street
+    } else if(!street.isNullOrBlank() && !unit.isNullOrBlank() && postalCode.isNullOrBlank()) {
+        address = "$street, Unit$unit"
+    } else if(!street.isNullOrBlank() && unit.isNullOrBlank() && !postalCode.isNullOrBlank()) {
+        address = "$street, Postal Code $postalCode"
+    } else if(!street.isNullOrBlank() && !unit.isNullOrBlank() && !postalCode.isNullOrBlank()) {
+        address = "$street, Unit$unit, Postal Code $postalCode"
+    } else {
+        address = "Not set"
+    }
 
     Column(
         modifier = Modifier
@@ -107,7 +123,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(10.dp))
                     Text("My Address:", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("Not set", fontSize = 16.sp, lineHeight = 20.sp)
+                    Text(address, fontSize = 16.sp, lineHeight = 20.sp)
                 }
             }
 

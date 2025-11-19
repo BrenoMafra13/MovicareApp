@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface UserDao {
@@ -19,5 +20,8 @@ interface UserDao {
 
     @Query("UPDATE users SET avatarUri = :uri WHERE id = :id")
     suspend fun updateAvatar(id: Long, uri: String)
+
+    @Query("UPDATE users SET street = :street, unit = :unit, postalcode = :postalCode WHERE id = :id")
+    suspend fun updateUserAddress(id: Long, street: String, unit: String, postalCode: String)
 }
 
