@@ -62,8 +62,8 @@ fun AppNavHost() {
             HomeScreen(
                 userId = userId,
                 onAvatarClick = { nav.navigate("profile/$userId") },
-                onEditProfile = { nav.navigate("account") },
-                onSettings = { nav.navigate("account") },
+                onEditProfile = { nav.navigate("account/$userId") },
+                onSettings = { nav.navigate("account/$userId") },
                 onLogout = {
                     nav.navigate("welcome") {
                         popUpTo(0)
@@ -155,6 +155,16 @@ fun AppNavHost() {
             )
         }
 
-        composable("account") { AccountScreen(onBackClick = { nav.popBackStack() }) }
+        composable(
+            route = "account/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.LongType })
+            ) { entry ->
+            val userId = entry.arguments?.getLong("userId") ?: error("userId is required")
+
+            AccountScreen(
+                userId = userId,
+                onBackClick = { nav.popBackStack() }
+            )
+        }
     }
 }

@@ -12,5 +12,8 @@ data class UserEntity(
     val passwordHash: String,
     val salt: String,
     val role: String,
-    val avatarUri: String? = null
+    val avatarUri: String? = null,
+    val street: String? = null,
+    val unit: String? = null,
+    val postalCode: String? = null
 )

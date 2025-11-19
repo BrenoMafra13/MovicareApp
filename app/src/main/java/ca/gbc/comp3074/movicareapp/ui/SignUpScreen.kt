@@ -41,6 +41,9 @@ fun SignUpScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirm by remember { mutableStateOf("") }
+    var street by remember { mutableStateOf("") }
+    var unit by remember { mutableStateOf("") }
+    var postalCode by remember { mutableStateOf("") }
 
     var role by remember { mutableStateOf(roles.first()) }
     var roleMenu by remember { mutableStateOf(false) }
@@ -182,7 +185,10 @@ fun SignUpScreen(
                         email.trim(),
                         password,
                         role,
-                        avatarUri
+                        avatarUri,
+                        street,
+                        unit,
+                        postalCode
                     )
                 },
                 modifier = Modifier
