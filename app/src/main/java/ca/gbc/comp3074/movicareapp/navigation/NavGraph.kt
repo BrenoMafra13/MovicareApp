@@ -92,7 +92,7 @@ fun AppNavHost() {
                 onMedicationsClick = { nav.navigate("medications/$userId") },
                 onFamilyClick = { nav.navigate("familyMembers/$userId") },
                 onAppointmentsClick = { nav.navigate("appointments/$userId") },
-                onAccountClick = { nav.navigate("account") }
+                onAccountClick = { nav.navigate("account/$userId") }
             )
         }
 
