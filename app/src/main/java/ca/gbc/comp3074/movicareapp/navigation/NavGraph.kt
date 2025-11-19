@@ -62,8 +62,8 @@ fun AppNavHost() {
             HomeScreen(
                 userId = userId,
                 onAvatarClick = { nav.navigate("profile/$userId") },
-                onEditProfile = { nav.navigate("account") },
-                onSettings = { nav.navigate("account") },
+                onEditProfile = { nav.navigate("account/$userId") },
+                onSettings = { nav.navigate("account/$userId") },
                 onLogout = {
                     nav.navigate("welcome") {
                         popUpTo(0)
