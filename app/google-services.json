@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "105258813964",
+    "project_id": "movicare-85cbb",
+    "storage_bucket": "movicare-85cbb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:105258813964:android:e8ee7e1315b7e2bcb03c29",
+        "android_client_info": {
+          "package_name": "ca.gbc.comp3074.movicareapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVe3nEVsIt0CoZvgqTXy0s0wH_grfaUd8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
