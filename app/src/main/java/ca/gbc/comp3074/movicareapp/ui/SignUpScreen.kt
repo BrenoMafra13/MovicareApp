@@ -1,10 +1,12 @@
-package ca.gbc.comp3074.movicareapp
+package ca.gbc.comp3074.movicareapp.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
@@ -44,10 +46,18 @@ fun SignUpScreen(
     var street by remember { mutableStateOf("") }
     var unit by remember { mutableStateOf("") }
     var postalCode by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") } // For Invite Linking
 
     var role by remember { mutableStateOf(roles.first()) }
     var roleMenu by remember { mutableStateOf(false) }
 
+    // Caregiver specific fields
+    var specialty by remember { mutableStateOf("") }
+    var licenseNumber by remember { mutableStateOf("") }
+    var idDocumentUri by remember { mutableStateOf<String?>(null) }
+    var selfieUri by remember { mutableStateOf<String?>(null) }
+    var certificationUri by remember { mutableStateOf<String?>(null) }
+    
     var avatarUri by remember { mutableStateOf<String?>(null) }
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -78,7 +88,8 @@ fun SignUpScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 32.dp),
+                .padding(horizontal = 32.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -104,6 +115,34 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(8.dp))
 
+            ExposedDropdownMenuBox(
+                expanded = roleMenu,
+                onExpandedChange = { roleMenu = !roleMenu }
+            ) {
+                OutlinedTextField(
+                    value = role.replaceFirstChar { it.uppercase() },
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Role") },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = roleMenu,
+                    onDismissRequest = { roleMenu = false }
+                ) {
+                    roles.forEach {
+                        DropdownMenuItem(
+                            text = { Text(it.replaceFirstChar { c -> c.uppercase() }) },
+                            onClick = { role = it; roleMenu = false }
+                        )
+                    }
+                }
+            }
+            
+            Spacer(Modifier.height(12.dp))
+
             OutlinedTextField(
                 value = fullName, onValueChange = { fullName = it },
                 label = { Text("Full name") }, modifier = Modifier.fillMaxWidth()
@@ -125,6 +164,45 @@ fun SignUpScreen(
             Spacer(Modifier.height(12.dp))
 
             OutlinedTextField(
+                value = phoneNumber, onValueChange = { phoneNumber = it },
+                label = { Text("Phone Number") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(12.dp))
+            
+            // Caregiver Specific Section
+            if (role == "caregiver") {
+                Text("Caregiver Details", fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Start))
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = specialty, onValueChange = { specialty = it },
+                    label = { Text("Specialty (e.g. Nurse)") }, modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = licenseNumber, onValueChange = { licenseNumber = it },
+                    label = { Text("Professional License #") }, modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(12.dp))
+                
+                Text("Verification Documents", fontWeight = FontWeight.SemiBold, modifier = Modifier.align(Alignment.Start))
+                Text("Required: ID, Selfie, Certificate", fontSize = 12.sp, color = Color.Gray, modifier = Modifier.align(Alignment.Start))
+                
+
+                Button(onClick = { /* Mock ID Picker */ idDocumentUri = "mock_id.jpg" }, modifier = Modifier.fillMaxWidth()) {
+                    Text(if (idDocumentUri != null) "ID Uploaded ✓" else "Upload Gov ID")
+                }
+                Button(onClick = { /* Mock Selfie Picker */ selfieUri = "mock_selfie.jpg" }, modifier = Modifier.fillMaxWidth()) {
+                    Text(if (selfieUri != null) "Selfie Uploaded ✓" else "Upload Selfie")
+                }
+                Button(onClick = { /* Mock Cert Picker */ certificationUri = "mock_cert.jpg" }, modifier = Modifier.fillMaxWidth()) {
+                    Text(if (certificationUri != null) "Certificate Uploaded ✓" else "Upload Certificate")
+                }
+                Spacer(Modifier.height(12.dp))
+            }
+
+            OutlinedTextField(
                 value = password, onValueChange = { password = it },
                 label = { Text("Password") },
                 visualTransformation = PasswordVisualTransformation(),
@@ -140,34 +218,6 @@ fun SignUpScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth()
             )
-
-            Spacer(Modifier.height(12.dp))
-
-            ExposedDropdownMenuBox(
-                expanded = roleMenu,
-                onExpandedChange = { roleMenu = !roleMenu }
-            ) {
-                OutlinedTextField(
-                    value = role,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Role") },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                )
-                ExposedDropdownMenu(
-                    expanded = roleMenu,
-                    onDismissRequest = { roleMenu = false }
-                ) {
-                    roles.forEach {
-                        DropdownMenuItem(
-                            text = { Text(it) },
-                            onClick = { role = it; roleMenu = false }
-                        )
-                    }
-                }
-            }
 
             ui.error?.let {
                 Spacer(Modifier.height(8.dp))
@@ -188,7 +238,8 @@ fun SignUpScreen(
                         avatarUri,
                         street,
                         unit,
-                        postalCode
+                        postalCode,
+                        phoneNumber.trim() // Corrected here
                     )
                 },
                 modifier = Modifier
@@ -223,6 +274,7 @@ fun SignUpScreen(
                     )
                 }
             }
+            Spacer(Modifier.height(32.dp))
         }
     }
 }

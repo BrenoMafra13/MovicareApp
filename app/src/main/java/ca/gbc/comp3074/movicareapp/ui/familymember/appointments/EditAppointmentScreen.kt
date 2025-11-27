@@ -1,4 +1,4 @@
-package ca.gbc.comp3074.movicareapp
+package ca.gbc.comp3074.movicareapp.ui.familymember.appointments
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -31,24 +31,38 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddAppointmentScreen(
-    userId: Long,
+fun EditAppointmentScreen(
+    appointmentId: Long,
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
     val appointmentDao = remember { AppDatabase.getInstance(context).appointmentDao() }
     val scope = rememberCoroutineScope()
 
+    var appointment by remember { mutableStateOf<AppointmentEntity?>(null) }
+
     var appointmentType by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
+
+    LaunchedEffect(appointmentId) {
+        appointment = appointmentDao.getAppointmentById(appointmentId)
+    }
+
+    LaunchedEffect(appointment) {
+        appointment?.let {
+            appointmentType = it.type
+            day = it.day
+            time = it.time
+        }
+    }
+
     val canSave = appointmentType.isNotBlank() && day.isNotBlank() && time.isNotBlank()
     val dateFormatter = remember { DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.getDefault()) }
     val timeFormatter = remember { DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault()) }
     val dateInteraction = remember { MutableInteractionSource() }
     val timeInteraction = remember { MutableInteractionSource() }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun openDatePicker() {
         val today = LocalDate.now()
         DatePickerDialog(
@@ -63,7 +77,6 @@ fun AddAppointmentScreen(
         ).show()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun openTimePicker() {
         val now = LocalTime.now()
         TimePickerDialog(
@@ -81,13 +94,10 @@ fun AddAppointmentScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Add Appointment") },
+                title = { Text("Edit Appointment") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -110,113 +120,61 @@ fun AddAppointmentScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = day,
                     onValueChange = { },
                     label = { Text("Day") },
                     modifier = Modifier.fillMaxWidth(),
                     readOnly = true,
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.CalendarMonth,
-                            contentDescription = "Pick date"
-                        )
-                    }
+                    trailingIcon = { Icon(Icons.Filled.CalendarMonth, "Pick date") }
                 )
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .clickable(
-                            interactionSource = dateInteraction,
-                            indication = null
-                        ) { openDatePicker() }
-                )
+                Box(modifier = Modifier.matchParentSize().clickable(interactionSource = dateInteraction, indication = null) { openDatePicker() })
             }
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            Box(modifier = Modifier.fillMaxWidth()) {
                 OutlinedTextField(
                     value = time,
                     onValueChange = { },
                     label = { Text("Time") },
                     modifier = Modifier.fillMaxWidth(),
                     readOnly = true,
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.AccessTime,
-                            contentDescription = "Pick time"
-                        )
-                    }
+                    trailingIcon = { Icon(Icons.Filled.AccessTime, "Pick time") }
                 )
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .clickable(
-                            interactionSource = timeInteraction,
-                            indication = null
-                        ) { openTimePicker() }
-                )
+                Box(modifier = Modifier.matchParentSize().clickable(interactionSource = timeInteraction, indication = null) { openTimePicker() })
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Button(
                     onClick = onBackClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp)
-                        .padding(end = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFD32F2F),
-                        contentColor = Color.White
-                    ),
+                    modifier = Modifier.weight(1f).height(50.dp).padding(end = 8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F), contentColor = Color.White),
                     shape = RoundedCornerShape(6.dp)
-                ) {
-                    Text("Cancel", fontSize = 16.sp)
-                }
+                ) { Text("Cancel", fontSize = 16.sp) }
 
                 Button(
                     onClick = {
                         if (canSave) {
                             scope.launch {
-                                appointmentDao.insertAppointment(
-                                    AppointmentEntity(
-                                        ownerUserId = userId,
-                                        type = appointmentType.trim(),
-                                        day = day.trim(),
-                                        time = time.trim()
-                                    )
+                                val updatedAppt = appointment!!.copy(
+                                    type = appointmentType.trim(),
+                                    day = day.trim(),
+                                    time = time.trim()
                                 )
-                                appointmentType = ""
-                                day = ""
-                                time = ""
+                                appointmentDao.updateAppointment(updatedAppt)
                                 onBackClick()
                             }
                         }
                     },
                     enabled = canSave,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(50.dp)
-                        .padding(start = 8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1565C0),
-                        contentColor = Color.White
-                    ),
+                    modifier = Modifier.weight(1f).height(50.dp).padding(start = 8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1565C0), contentColor = Color.White),
                     shape = RoundedCornerShape(6.dp)
-                ) {
-                    Text("Save", fontSize = 16.sp)
-                }
+                ) { Text("Save Changes", fontSize = 16.sp) }
             }
         }
     }

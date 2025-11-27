@@ -24,5 +24,7 @@ data class MedicationEntity(
     val dosage: String,
     val time: String,
     val startDate: String? = null,
-    val endDate: String? = null
+    val endDate: String? = null,
+    val lastTakenDate: Long = 0L, // Timestamp of last time it was taken
+    val snoozeUntil: Long = 0L    // Timestamp until which it is snoozed
 )

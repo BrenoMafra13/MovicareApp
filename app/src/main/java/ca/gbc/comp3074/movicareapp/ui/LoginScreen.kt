@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -45,12 +46,12 @@ fun LoginScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Login") },
+                title = { Text(stringResource(R.string.login_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -67,7 +68,7 @@ fun LoginScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.logo),
-                contentDescription = "App Logo",
+                contentDescription = stringResource(R.string.app_logo_description),
                 modifier = Modifier
                     .size(200.dp)
                     .padding(bottom = 24.dp)
@@ -78,7 +79,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("Username") },
+                label = { Text(stringResource(R.string.username)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -87,7 +88,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password)) },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 modifier = Modifier.fillMaxWidth()
@@ -113,13 +114,13 @@ fun LoginScreen(
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
-                    if (ui.loading) "Signing in…" else "Log In",
+                    if (ui.loading) stringResource(R.string.signing_in) else stringResource(R.string.login_button),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
 
-            TextButton(onClick = onGoToSignUp) { Text("Create an account") }
+            TextButton(onClick = onGoToSignUp) { Text(stringResource(R.string.create_account)) }
         }
     }
 }
