@@ -23,5 +23,10 @@ interface UserDao {
 
     @Query("UPDATE users SET street = :street, unit = :unit, postalcode = :postalCode WHERE id = :id")
     suspend fun updateUserAddress(id: Long, street: String, unit: String, postalCode: String)
-}
 
+    @Query("SELECT * FROM users WHERE phoneNumber = :phone LIMIT 1")
+    suspend fun getByPhoneNumber(phone: String): UserEntity?
+
+    @Query("UPDATE users SET conditions = :conditions, allergies = :allergies, height = :height, weight = :weight WHERE id = :id")
+    suspend fun updateHealthInfo(id: Long, conditions: String, allergies: String, height: String, weight: String)
+}

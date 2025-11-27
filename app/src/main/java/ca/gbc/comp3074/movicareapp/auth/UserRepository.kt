@@ -42,7 +42,13 @@ class UserRepository(private val db: AppDatabase) {
         avatarUri: String?,
         street: String?,
         unit: String?,
-        postalCode: String?
+        postalCode: String?,
+        phoneNumber: String?,
+        specialty: String? = null,
+        licenseNumber: String? = null,
+        idDocumentUri: String? = null,
+        selfieUri: String? = null,
+        certificationUri: String? = null
     ): Result<Pair<Long, String>> = withContext(Dispatchers.IO) {
         try {
             val u = username.trim()
@@ -68,7 +74,15 @@ class UserRepository(private val db: AppDatabase) {
                 avatarUri = avatarUri,
                 street = street,
                 unit = unit,
-                postalCode = postalCode
+                postalCode = postalCode,
+                phoneNumber = phoneNumber,
+                specialty = specialty,
+                licenseNumber = licenseNumber,
+                idDocumentUri = idDocumentUri,
+                selfieUri = selfieUri,
+                certificationUri = certificationUri,
+                isVerified = false,
+                verificationStatus = if (role == "caregiver") "PENDING" else "NONE"
             )
 
             val id = userDao.insert(entity)

@@ -41,11 +41,12 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         avatarUri: String?,
         street: String?,
         unit: String?,
-        postalCode: String?
+        postalCode: String?,
+        phoneNumber: String?
     ) {
         viewModelScope.launch {
             _signupUi.update { it.copy(loading = true, error = null, successRole = null, userId = null) }
-            val result = repo.register(fullName, username, email, password, role, avatarUri, street, unit, postalCode)
+            val result = repo.register(fullName, username, email, password, role, avatarUri, street, unit, postalCode, phoneNumber)
             result
                 .onSuccess { (id, createdRole) ->
                     _signupUi.update { it.copy(loading = false, successRole = createdRole, userId = id) }
@@ -56,4 +57,3 @@ class AuthViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 }
-
